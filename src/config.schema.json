@@ -1,0 +1,23 @@
+{
+    "type": "object",
+    "properties": {
+        "managed_sentences_tags": {
+            "type": "string"
+        },
+        "match_all_words": {
+            "type": "boolean"
+        },
+        "morphemizer": {
+            "type": "string"
+        },
+        "skip_known_sentences": {
+            "type": "boolean"
+        },
+        "words_deck_field": {
+            "type": "string"
+        },
+        "words_deck_name": {
+            "type": "string"
+        }
+    }
+}

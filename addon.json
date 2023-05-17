@@ -1,0 +1,6 @@
+{
+    "name": "Known Word Manager",
+    "package": "known_word_manager",
+    "homepage": "https://github.com/abdnh/anki-addon-template",
+    "min_point_version": 45
+}
