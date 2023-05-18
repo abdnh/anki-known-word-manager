@@ -3,7 +3,8 @@ from __future__ import annotations
 from enum import Enum
 from typing import Sequence
 
-from anki.collection import OpChanges, SearchNode
+from anki.cards import CardId
+from anki.collection import OpChanges
 from anki.consts import *
 from anki.notes import Note, NoteId
 from aqt import mw
@@ -69,6 +70,10 @@ def get_deck_notes(deck_name: str, filt: str = "") -> Sequence[NoteId]:
     return mw.col.find_notes('deck:"%s" %s' % (deck_name, filt))
 
 
+def get_deck_cards(deck_name: str) -> Sequence[CardId]:
+    return mw.col.find_cards('deck:"%s"' % (deck_name,))
+
+
 def get_known_words(
     deck_name: str, word_field: str, morphemizer: Morphemizer, match_all_words: bool
 ) -> set[str]:
@@ -79,8 +84,8 @@ def get_known_words(
             "critical",
             "Deck '%s' is empty or does not match your criteria." % deck_name,
         )
-    for noteid in note_list:
-        note = mw.col.get_note(noteid)
+    for note_id in note_list:
+        note = mw.col.get_note(note_id)
         if word_field in note:
             for k in get_unique_words(note[word_field], morphemizer):
                 word_set.add(k)
@@ -96,11 +101,6 @@ def should_ignore_note(note: Note, morphemizer: Morphemizer) -> bool:
     return False
 
 
-def tags_search_term(tags: str) -> str:
-    terms = [SearchNode(tag=tag) for tag in tags.split()]
-    return mw.col.build_search_string(*terms, joiner="OR")
-
-
 class KnownWordChanges:
     def __init__(self, report: str, changes: OpChanges):
         self.report = report
@@ -108,7 +108,7 @@ class KnownWordChanges:
 
 
 def update_managed_cards(
-    managed_tags: str,
+    sentences_deck: str,
     words_deck: str,
     word_field: str,
     morphemizer: Morphemizer,
@@ -122,12 +122,11 @@ def update_managed_cards(
     suspended_text = []
     unsuspended_text = []
 
-    managed_cards = mw.col.find_cards(f"{tags_search_term(managed_tags)} is:new")
-
+    managed_cards = get_deck_cards(sentences_deck)
     if len(managed_cards) == 0:
         raise KnownWordManagerException(
             "warning",
-            f'No new cards with the tags "{managed_tags}" were found. Nothing will happen.',
+            f'No sentence cards in the deck "{sentences_deck}" were found. Nothing will happen.',
         )
 
     suspend_cids = []

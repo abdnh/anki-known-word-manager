@@ -1,6 +1,6 @@
--   `managed_sentences_tag`: Notes having this tag are managed by the add-on.
 -   `match_all_words`: Whether to match all words regardless of whether they are reviewed.
 -   `morphemizer`: Defines what is considered a word. Can be `Kanji` (e.g. for Chinese and Japanese) or `Space-separated` (for langauges with spaces).
+-   `sentences_deck`: The sentences containing the sentence cards that should be managed by the add-on.
 -   `skip_known_sentences`: Set to `true` to skip sentences containing only seen words.
--   `words_deck_field`: The field containing the words.
--   `words_deck_name`: The words deck.
+-   `word_field`: The field containing the words in `words_deck`.
+-   `words_deck`: The words deck.

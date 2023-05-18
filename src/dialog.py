@@ -3,7 +3,6 @@ from aqt.deckchooser import DeckChooser
 from aqt.main import AnkiQt
 from aqt.operations import CollectionOp
 from aqt.qt import *
-from aqt.tagedit import TagEdit
 from aqt.utils import showInfo
 
 from . import consts
@@ -31,20 +30,30 @@ class Dialog(QDialog):
         self.form = Ui_Dialog()
         self.form.setupUi(self)
         self.setWindowTitle(consts.ADDON_NAME)
-        self.tagedit = TagEdit(self)
-        self.tagedit.setCol(self.mw.col)
-        self.tagedit.setText(self.config["managed_sentences_tags"])
-        self.form.formLayout.replaceWidget(self.form.managedTagWidget, self.tagedit)
+        sentences_deck = (
+            self.config["sentences_deck"]
+            if self.config["sentences_deck"]
+            else "Default"
+        )
+        self.sentences_deck_chooser = DeckChooser(
+            self.mw,
+            self.form.managedDeckWidget,
+            label=False,
+            starting_deck_id=self.mw.col.decks.id(sentences_deck),
+        )
+        words_deck = (
+            self.config["words_deck"] if self.config["words_deck"] else "Default"
+        )
         # FIXME: the on_deck_changed arg is not available in versions older than 2.1.50
-        self.deck_chooser = DeckChooser(
+        self.words_deck_chooser = DeckChooser(
             self.mw,
             self.form.wordsDeckWidget,
             label=False,
-            starting_deck_id=self.mw.col.decks.id(self.config["words_deck_name"]),
+            starting_deck_id=self.mw.col.decks.id(words_deck),
             on_deck_changed=self.on_deck_changed,
         )
         self.update_fields()
-        word_field = self.config["words_deck_field"].lower()
+        word_field = self.config["word_field"].lower()
         for i in range(self.form.wordField.count()):
             field = self.form.wordField.itemText(i)
             if word_field == field.lower():
@@ -67,7 +76,7 @@ class Dialog(QDialog):
         # TODO: maybe simplify query
         fields = self.mw.col.db.list(
             "select distinct name from fields where ntid in (select id from notetypes where id in (select mid from notes where id in (select nid from cards where did = ?)))",
-            self.deck_chooser.selected_deck_id,
+            self.words_deck_chooser.selected_deck_id,
         )
         self.form.wordField.clear()
         self.form.wordField.addItems(fields)
@@ -76,16 +85,16 @@ class Dialog(QDialog):
         self.update_fields()
 
     def on_process(self) -> None:
-        managed_tags = self.tagedit.text()
-        words_deck = self.deck_chooser.deckName()
+        sentences_deck = self.sentences_deck_chooser.deckName()
+        words_deck = self.words_deck_chooser.deckName()
         word_field = self.form.wordField.currentText()
         morphemizer = list(Morphemizer)[self.form.morphemizer.currentIndex()]
         skip_known_sentences = self.form.skipKnownSentences.isChecked()
         match_all_words = self.form.matchAllWords.isChecked()
 
-        self.config["managed_sentences_tags"] = managed_tags
-        self.config["words_deck_name"] = words_deck
-        self.config["words_deck_field"] = word_field
+        self.config["sentences_deck"] = sentences_deck
+        self.config["words_deck"] = words_deck
+        self.config["word_field"] = word_field
         self.config["morphemizer"] = morphemizer.value
         self.config["skip_known_sentences"] = skip_known_sentences
         self.config["match_all_words"] = match_all_words
@@ -93,7 +102,7 @@ class Dialog(QDialog):
 
         def op(col: Collection) -> KnownWordChanges:
             return update_managed_cards(
-                managed_tags,
+                sentences_deck,
                 words_deck,
                 word_field,
                 morphemizer,

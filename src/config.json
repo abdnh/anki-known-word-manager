@@ -1,8 +1,8 @@
 {
-    "managed_sentences_tags": "managed_word",
     "match_all_words": false,
     "morphemizer": "spaces",
+    "sentences_deck": "",
     "skip_known_sentences": false,
-    "words_deck_field": "",
-    "words_deck_name": ""
+    "word_field": "",
+    "words_deck": ""
 }
