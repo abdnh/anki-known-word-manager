@@ -22,7 +22,11 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QWidget" name="managedDeckWidget" native="true"/>
+    <widget class="QWidget" name="managedDeckWidget" native="true">
+     <property name="focusPolicy">
+      <enum>Qt::WheelFocus</enum>
+     </property>
+    </widget>
    </item>
    <item row="1" column="0">
     <widget class="QLabel" name="label_2">
@@ -32,7 +36,11 @@
     </widget>
    </item>
    <item row="1" column="1">
-    <widget class="QWidget" name="wordsDeckWidget" native="true"/>
+    <widget class="QWidget" name="wordsDeckWidget" native="true">
+     <property name="focusPolicy">
+      <enum>Qt::WheelFocus</enum>
+     </property>
+    </widget>
    </item>
    <item row="2" column="0">
     <widget class="QLabel" name="label_3">
@@ -80,6 +88,15 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>managedDeckWidget</tabstop>
+  <tabstop>wordsDeckWidget</tabstop>
+  <tabstop>wordField</tabstop>
+  <tabstop>morphemizer</tabstop>
+  <tabstop>skipKnownSentences</tabstop>
+  <tabstop>matchAllWords</tabstop>
+  <tabstop>processButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
