@@ -30,10 +30,9 @@ def is_kanji(char: str) -> bool:
 def get_unique_words(text: str, morphemizer: Morphemizer) -> set[str]:
     word_set = set()
     if morphemizer == Morphemizer.KANJI:
-        for line in text:
-            for c in line:
-                if is_kanji(c):
-                    word_set.add(c)
+        for c in text:
+            if is_kanji(c):
+                word_set.add(c)
     else:
         word_set.update(text.split())
     return word_set
